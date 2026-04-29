@@ -28,6 +28,11 @@ const styles = `
     --accent-red: #ff3333;
     --accent-cyan: #00f2ff;
     --border-color: rgba(0, 242, 255, 0.2);
+    color-scheme: dark; /* スマホでダークモードベースのフォーム部品を強制 */
+  }
+
+  body {
+    color: #f3f4f6; /* 全体の文字色を強制的に明るくする */
   }
 
   .font-mono { font-family: 'Share Tech Mono', monospace; }
@@ -83,10 +88,22 @@ const styles = `
   }
 
   .input-field {
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(0, 242, 255, 0.2);
-    color: white;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(0, 242, 255, 0.3);
+    color: #ffffff !important;
     transition: all 0.3s;
+    font-size: 16px !important; /* スマホでのズーム防止 */
+  }
+
+  /* セレクトボックスのOS標準デザインをリセットし、SF風の矢印に変更 */
+  select.input-field {
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2300f2ff'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%></path>%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.2rem;
+    padding-right: 2.5rem;
   }
 
   .input-field:focus {
@@ -212,13 +229,13 @@ function InputScreen({ onCalculate }) {
   const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i);
   
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
-      <div className="glass-panel max-w-2xl w-full p-8 rounded-xl relative animate-reveal">
-        <div className="flex items-center gap-3 mb-8 border-b border-cyan-900/50 pb-4">
-          <Activity className="text-cyan-400 w-8 h-8 glow-text-cyan" />
+    <div className="min-h-screen flex items-center justify-center p-4 md:p-6">
+      <div className="glass-panel max-w-2xl w-full p-6 md:p-10 rounded-2xl relative animate-reveal text-gray-100">
+        <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-4 mb-10 border-b border-cyan-900/50 pb-6 text-center md:text-left">
+          <Activity className="text-cyan-400 w-10 h-10 glow-text-cyan flex-shrink-0" />
           <div>
-            <h1 className="text-xl font-bold tracking-widest text-white">生命活動予測システム</h1>
-            <p className="text-[10px] text-cyan-500 font-mono">システムバージョン 4.0 // プレミアム版</p>
+            <h1 className="text-2xl md:text-3xl font-bold tracking-widest text-white glow-text-cyan">生命活動予測システム</h1>
+            <p className="text-xs text-cyan-500 font-mono mt-2">システムバージョン 4.0 // プレミアム版</p>
           </div>
         </div>
 
@@ -230,39 +247,39 @@ function InputScreen({ onCalculate }) {
           
           const birthDate = `${formData.birthYear}-${formData.birthMonth.padStart(2, '0')}-${formData.birthDay.padStart(2, '0')}`;
           onCalculate({ ...formData, birthDate });
-        }} className="space-y-6">
+        }} className="space-y-8">
           
-          <section className="space-y-4">
-            <h2 className="text-xs font-mono text-cyan-600 flex items-center gap-2">
-              <User className="w-3 h-3" /> 個体識別データ
+          <section className="space-y-4 bg-black/20 p-4 md:p-6 rounded-xl border border-gray-800/50">
+            <h2 className="text-sm font-mono text-cyan-400 flex items-center gap-2 mb-4">
+              <User className="w-4 h-4" /> 個体識別データ
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-1">
-                <label className="text-[10px] text-gray-500 ml-1">誕生年</label>
-                <select value={formData.birthYear} onChange={e => setFormData({...formData, birthYear: e.target.value})} className="input-field w-full p-3 rounded font-mono text-sm">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs text-gray-400 ml-1 font-bold">誕生年</label>
+                <select value={formData.birthYear} onChange={e => setFormData({...formData, birthYear: e.target.value})} className="input-field w-full p-4 rounded-lg font-mono">
                   {years.map(y => <option key={y} value={y}>{y}年</option>)}
                 </select>
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] text-gray-400 ml-1">月</label>
-                <select value={formData.birthMonth} onChange={e => setFormData({...formData, birthMonth: e.target.value})} className="input-field w-full p-3 rounded font-mono text-sm">
+              <div className="space-y-2">
+                <label className="text-xs text-gray-400 ml-1 font-bold">月</label>
+                <select value={formData.birthMonth} onChange={e => setFormData({...formData, birthMonth: e.target.value})} className="input-field w-full p-4 rounded-lg font-mono">
                   {Array.from({length:12}, (_, i) => i+1).map(m => <option key={m} value={m}>{m}月</option>)}
                 </select>
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] text-gray-400 ml-1">日</label>
-                <select value={formData.birthDay} onChange={e => setFormData({...formData, birthDay: e.target.value})} className="input-field w-full p-3 rounded font-mono text-sm">
+              <div className="space-y-2">
+                <label className="text-xs text-gray-400 ml-1 font-bold">日</label>
+                <select value={formData.birthDay} onChange={e => setFormData({...formData, birthDay: e.target.value})} className="input-field w-full p-4 rounded-lg font-mono">
                   {Array.from({length:31}, (_, i) => i+1).map(d => <option key={d} value={d}>{d}日</option>)}
                 </select>
               </div>
             </div>
             
-            <div className="space-y-1">
-              <label className="text-[10px] text-gray-400 ml-1">性別</label>
-              <div className="flex gap-2">
+            <div className="space-y-2 pt-4">
+              <label className="text-xs text-gray-400 ml-1 font-bold">性別</label>
+              <div className="flex gap-4">
                 {['male', 'female'].map(g => (
                   <button key={g} type="button" onClick={() => setFormData({...formData, gender: g})} 
-                    className={`flex-1 p-3 rounded font-mono text-xs transition-all ${formData.gender === g ? 'bg-cyan-900/50 border border-cyan-500 text-white' : 'bg-black/40 border border-gray-800 text-gray-500 hover:border-gray-600'}`}>
+                    className={`flex-1 p-4 rounded-lg font-bold text-base transition-all border-2 ${formData.gender === g ? 'bg-cyan-900/60 border-cyan-400 text-white shadow-[0_0_15px_rgba(0,242,255,0.4)]' : 'bg-black/60 border-gray-700 text-gray-400 hover:border-gray-500 hover:bg-black/80'}`}>
                     {g === 'male' ? '男性' : '女性'}
                   </button>
                 ))}
@@ -270,38 +287,38 @@ function InputScreen({ onCalculate }) {
             </div>
           </section>
 
-          <section className="space-y-4 pt-4 border-t border-gray-800">
-            <h2 className="text-xs font-mono text-cyan-600 flex items-center gap-2">
-              <ShieldAlert className="w-3 h-3" /> 生命リスク要因
+          <section className="space-y-4 bg-black/20 p-4 md:p-6 rounded-xl border border-gray-800/50">
+            <h2 className="text-sm font-mono text-cyan-400 flex items-center gap-2 mb-4">
+              <ShieldAlert className="w-4 h-4" /> 生命リスク要因
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-1">
-                <label className="text-[10px] text-gray-400 flex items-center gap-1"><Wind className="w-3 h-3" /> 喫煙</label>
-                <select value={formData.smoking} onChange={e => setFormData({...formData, smoking: e.target.value})} className="input-field w-full p-3 rounded text-xs">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs text-gray-400 flex items-center gap-1 font-bold"><Wind className="w-4 h-4 text-gray-500" /> 喫煙</label>
+                <select value={formData.smoking} onChange={e => setFormData({...formData, smoking: e.target.value})} className="input-field w-full p-4 rounded-lg font-bold">
                   <option value="none">なし</option><option value="sometimes">時々</option><option value="everyday">毎日</option>
                 </select>
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] text-gray-400 flex items-center gap-1"><Coffee className="w-3 h-3" /> 飲酒</label>
-                <select value={formData.drinking} onChange={e => setFormData({...formData, drinking: e.target.value})} className="input-field w-full p-3 rounded text-xs">
+              <div className="space-y-2">
+                <label className="text-xs text-gray-400 flex items-center gap-1 font-bold"><Coffee className="w-4 h-4 text-gray-500" /> 飲酒</label>
+                <select value={formData.drinking} onChange={e => setFormData({...formData, drinking: e.target.value})} className="input-field w-full p-4 rounded-lg font-bold">
                   <option value="none">なし</option><option value="sometimes">時々</option><option value="everyday">毎日</option>
                 </select>
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] text-gray-400 flex items-center gap-1"><Moon className="w-3 h-3" /> 睡眠</label>
-                <select value={formData.sleep} onChange={e => setFormData({...formData, sleep: e.target.value})} className="input-field w-full p-3 rounded text-xs">
+              <div className="space-y-2">
+                <label className="text-xs text-gray-400 flex items-center gap-1 font-bold"><Moon className="w-4 h-4 text-gray-500" /> 睡眠</label>
+                <select value={formData.sleep} onChange={e => setFormData({...formData, sleep: e.target.value})} className="input-field w-full p-4 rounded-lg font-bold">
                   <option value="short">不足</option><option value="normal">普通</option><option value="good">十分</option>
                 </select>
               </div>
             </div>
           </section>
 
-          <button type="submit" className="btn-primary w-full py-5 rounded-lg text-white font-bold tracking-[0.5em] text-lg shadow-lg shadow-red-900/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
+          <button type="submit" className="btn-primary w-full py-6 mt-4 rounded-xl text-white font-bold tracking-[0.5em] text-lg md:text-xl shadow-lg shadow-red-900/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
             解析シーケンス開始
           </button>
           
           {/* Reference Data Disclosure */}
-          <div className="mt-6 text-[10px] text-cyan-700/60 font-mono text-center leading-relaxed">
+          <div className="mt-8 text-[10px] text-cyan-600 font-mono text-center leading-relaxed bg-cyan-950/20 p-4 rounded-lg border border-cyan-900/30">
             [ REFERENCE DATA ]<br/>
             本システムの予測ベース値は、厚生労働省「令和元年簡易生命表」<br/>
             および「健康寿命の令和元年値」の統計データを参照しています。<br/>
@@ -353,79 +370,82 @@ function ResultScreen({ result, formData, onReset }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 pb-20">
-      <div className="glass-panel max-w-5xl w-full p-4 md:p-10 rounded-2xl animate-reveal relative overflow-hidden">
+      <div className="glass-panel max-w-5xl w-full p-4 md:p-10 rounded-2xl animate-reveal relative overflow-hidden text-gray-100">
         
         {/* Header Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
           <div className="bg-black/40 p-4 border border-gray-800 rounded-lg">
-            <p className="text-[10px] text-cyan-600 font-mono mb-1 tracking-tighter">予測健康寿命</p>
-            <p className="text-3xl font-bold font-mono text-white glow-text-cyan">{result.healthAge}<span className="text-xs ml-1 text-gray-500">歳</span></p>
+            <p className="text-[10px] text-cyan-400 font-mono mb-1 tracking-tighter font-bold">予測健康寿命</p>
+            <p className="text-3xl font-bold font-mono text-white glow-text-cyan">{result.healthAge}<span className="text-xs ml-1 text-cyan-200">歳</span></p>
           </div>
           <div className="bg-black/40 p-4 border border-gray-800 rounded-lg">
-            <p className="text-[10px] text-cyan-600 font-mono mb-1">予測平均寿命</p>
-            <p className="text-3xl font-bold font-mono text-white glow-text-cyan">{result.lifeAge}<span className="text-xs ml-1 text-gray-500">歳</span></p>
+            <p className="text-[10px] text-cyan-400 font-mono mb-1 font-bold">予測平均寿命</p>
+            <p className="text-3xl font-bold font-mono text-white glow-text-cyan">{result.lifeAge}<span className="text-xs ml-1 text-cyan-200">歳</span></p>
           </div>
-          <div className="col-span-2 bg-red-950/20 p-4 border border-red-900/30 rounded-lg relative overflow-hidden">
-            <p className="text-[10px] text-red-500 font-mono mb-1">生命活動進行度</p>
-            <div className="flex items-end gap-2">
+          <div className="col-span-2 bg-red-950/30 p-4 border border-red-900/50 rounded-lg relative overflow-hidden">
+            <p className="text-[10px] text-red-400 font-mono mb-1 font-bold">生命活動進行度</p>
+            <div className="flex items-end gap-3">
               <p className="text-3xl font-bold font-mono text-red-500 glow-text-red">{result.progressRate}%</p>
-              <div className="flex-1 h-2 bg-black/60 rounded-full mb-2 overflow-hidden border border-red-900/20">
-                <div className="h-full bg-red-600 shadow-[0_0_10px_rgba(255,0,0,0.5)] transition-all duration-1000" style={{width: `${result.progressRate}%`}}></div>
+              <div className="flex-1 h-3 bg-black/80 rounded-full mb-2 overflow-hidden border border-red-900/40">
+                <div className="h-full bg-red-600 shadow-[0_0_10px_rgba(255,0,0,0.8)] transition-all duration-1000" style={{width: `${result.progressRate}%`}}></div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Main Countdown */}
-        <div className="flex flex-col md:flex-row gap-8 items-center justify-center py-10 border-y border-cyan-900/20 mb-10">
+        <div className="flex flex-col md:flex-row gap-8 items-center justify-center py-10 border-y border-cyan-900/30 mb-10 bg-black/20 rounded-xl">
           <div className="text-center space-y-2">
-            <h3 className="text-xs text-cyan-500 font-mono tracking-[0.4em]">健康活動限界まで</h3>
-            <div className={`text-5xl md:text-7xl font-black font-mono tracking-tighter flex items-baseline justify-center gap-2 ${result.isHealthOver ? 'text-red-600 animate-pulse' : 'text-white'}`}>
-              <span className="text-xl md:text-3xl font-normal text-gray-500">{result.isHealthOver ? "" : "あと"}</span>
+            <h3 className="text-sm text-cyan-400 font-mono tracking-[0.4em] font-bold">健康活動限界まで</h3>
+            <div className={`text-5xl md:text-7xl font-black font-mono tracking-tighter flex items-baseline justify-center gap-2 ${result.isHealthOver ? 'text-red-500 animate-pulse' : 'text-white'}`}>
+              <span className="text-xl md:text-3xl font-normal text-cyan-200">{result.isHealthOver ? "" : "あと"}</span>
               {result.isHealthOver ? "限界突破" : result.healthDays.toLocaleString()}
-              <span className="text-xl md:text-3xl font-normal text-gray-500">{result.isHealthOver ? "" : "日"}</span>
+              <span className="text-xl md:text-3xl font-normal text-cyan-200">{result.isHealthOver ? "" : "日"}</span>
             </div>
-            <p className="text-gray-500 text-xs font-mono uppercase">{result.isHealthOver ? "限界値を超過しています" : "残存日数"}</p>
+            <p className="text-cyan-600 text-xs font-mono uppercase font-bold">{result.isHealthOver ? "限界値を超過しています" : "残存日数"}</p>
           </div>
           
-          <div className="hidden md:block w-px h-32 bg-gradient-to-b from-transparent via-cyan-900/50 to-transparent"></div>
+          <div className="hidden md:block w-px h-32 bg-gradient-to-b from-transparent via-cyan-500/50 to-transparent"></div>
 
           <div className="text-center space-y-2">
-            <h3 className="text-xs text-red-600 font-mono tracking-[0.4em]">完全生命活動停止まで</h3>
-            <div className="text-4xl md:text-6xl font-black font-mono text-red-800 tracking-tighter flex items-baseline justify-center gap-2">
-              <span className="text-lg md:text-2xl font-normal text-gray-600">あと</span>
+            <h3 className="text-sm text-red-500 font-mono tracking-[0.4em] font-bold">完全生命活動停止まで</h3>
+            <div className="text-4xl md:text-6xl font-black font-mono text-red-600 tracking-tighter flex items-baseline justify-center gap-2 glow-text-red">
+              <span className="text-lg md:text-2xl font-normal text-red-300">あと</span>
               {result.isLifeOver ? "測定不能" : result.lifeDays.toLocaleString()}
-              <span className="text-lg md:text-2xl font-normal text-gray-600">日</span>
+              <span className="text-lg md:text-2xl font-normal text-red-300">日</span>
             </div>
-            <p className="text-gray-600 text-xs font-mono uppercase">残存猶予期間</p>
+            <p className="text-red-800 text-xs font-mono uppercase font-bold">残存猶予期間</p>
           </div>
         </div>
 
         {/* AI System Report (Default Display) */}
-        <div className="bg-black/60 rounded-xl border border-cyan-900/30 p-6 mb-8 flex flex-col relative animate-reveal delay-3">
-          <div className="absolute top-0 left-0 w-full h-0.5 bg-cyan-500/50"></div>
-          <div className="flex justify-between items-center mb-4">
-            <span className="text-[10px] text-cyan-600 font-mono">● CH-04: 管理AI システムレポート</span>
-            <BarChart3 className="text-cyan-900 w-4 h-4" />
+        <div className="bg-black/80 rounded-xl border border-cyan-500/30 p-6 md:p-8 mb-8 flex flex-col relative animate-reveal delay-3 shadow-[0_0_20px_rgba(0,242,255,0.1)]">
+          <div className="absolute top-0 left-0 w-full h-1 bg-cyan-500/80"></div>
+          <div className="flex justify-between items-center mb-6">
+            <span className="text-xs text-cyan-400 font-mono font-bold flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+              CH-04: 管理AI システムレポート
+            </span>
+            <BarChart3 className="text-cyan-500 w-5 h-5" />
           </div>
-          <p className="text-white font-serif text-lg leading-relaxed">{aiMessage}</p>
+          <p className="text-white font-serif text-lg md:text-xl leading-loose tracking-wide">{aiMessage}</p>
         </div>
 
         {/* Communication Block (Other Channels) */}
         <div className="space-y-6 mb-12">
           <button 
             onClick={() => setShowOthers(!showOthers)} 
-            className="text-[10px] font-mono text-cyan-500 hover:text-cyan-300 flex items-center gap-2 transition-all border border-cyan-900/50 bg-cyan-900/10 px-6 py-3 rounded-full mx-auto"
+            className="text-sm font-bold font-mono text-cyan-300 hover:text-white flex items-center gap-3 transition-all border-2 border-cyan-700/80 bg-cyan-900/30 px-8 py-4 rounded-full mx-auto hover:bg-cyan-800/50 hover:shadow-[0_0_15px_rgba(0,242,255,0.3)]"
           >
-            <Navigation className={`w-3 h-3 transition-transform ${showOthers ? 'rotate-180' : ''}`} /> 
+            <Navigation className={`w-4 h-4 transition-transform duration-300 ${showOthers ? 'rotate-180' : ''}`} /> 
             他の助言も聞きたい？
           </button>
 
           {showOthers && (
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 animate-reveal">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 animate-reveal bg-black/40 p-6 rounded-2xl border border-gray-800">
               <div className="lg:col-span-2 space-y-4">
-                <h4 className="text-[10px] font-mono text-cyan-700 flex items-center gap-2"><Navigation className="w-3 h-3" /> 通信チャンネル選択</h4>
-                <div className="grid grid-cols-1 gap-2">
+                <h4 className="text-xs font-mono text-cyan-400 flex items-center gap-2 font-bold"><Navigation className="w-4 h-4" /> 通信チャンネル選択</h4>
+                <div className="grid grid-cols-1 gap-3">
                   {[
                     {id: 'captain', name: 'CH-01: 艦長', icon: '艦'},
                     {id: 'muscle', name: 'CH-02: 筋肉トレーナー', icon: '筋'},
@@ -433,44 +453,49 @@ function ResultScreen({ result, formData, onReset }) {
                     {id: 'chu2', name: 'CH-05: 暗黒魔界の覇王', icon: '魔'}
                   ].map(c => (
                     <button key={c.id} onClick={() => setChannel(c.id)} 
-                      className={`text-left p-3 rounded font-mono text-[10px] transition-all border ${channel === c.id ? 'bg-cyan-900/40 border-cyan-500 text-white shadow-[0_0_15px_rgba(0,242,255,0.2)]' : 'bg-black/40 border-gray-800 text-gray-500 hover:border-gray-600'}`}>
-                      <span className="mr-2 text-cyan-600 opacity-50">[{c.icon}]</span> {c.name}
+                      className={`text-left p-4 rounded-lg font-mono text-xs transition-all border-2 ${channel === c.id ? 'bg-cyan-900/60 border-cyan-400 text-white shadow-[0_0_15px_rgba(0,242,255,0.4)]' : 'bg-black/60 border-gray-700 text-gray-400 hover:border-gray-500 hover:bg-black/80'}`}>
+                      <span className="mr-3 text-cyan-400 font-bold opacity-80">[{c.icon}]</span> {c.name}
                     </button>
                   ))}
                 </div>
-                <button onClick={handleFetch} className="w-full py-4 bg-cyan-900/20 border border-cyan-800 text-cyan-400 font-bold tracking-widest text-xs hover:bg-cyan-800/40 transition-all">
+                <button onClick={handleFetch} className="w-full py-5 mt-2 bg-cyan-900/40 border-2 border-cyan-600 text-cyan-300 font-bold tracking-widest text-sm hover:bg-cyan-800/60 hover:text-white transition-all rounded-lg shadow-[0_0_10px_rgba(0,242,255,0.2)]">
                   通信を受信する
                 </button>
               </div>
 
-              <div className="lg:col-span-3 bg-black/60 rounded-xl border border-cyan-900/30 p-6 flex flex-col relative min-h-[200px]">
-                <div className="absolute top-0 left-0 w-full h-0.5 bg-cyan-500/50"></div>
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-[10px] text-cyan-600 font-mono animate-pulse">● シグナル受信中...</span>
-                  <BarChart3 className="text-cyan-900 w-4 h-4" />
+              <div className="lg:col-span-3 bg-black/80 rounded-xl border border-cyan-700/50 p-6 md:p-8 flex flex-col relative min-h-[250px] shadow-inner">
+                <div className="absolute top-0 left-0 w-full h-1 bg-cyan-400/80"></div>
+                <div className="flex justify-between items-center mb-6 border-b border-cyan-900/50 pb-4">
+                  <span className="text-xs text-cyan-400 font-mono font-bold flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                    シグナル受信中...
+                  </span>
+                  <BarChart3 className="text-cyan-600 w-5 h-5" />
                 </div>
                 
                 {loading ? (
-                  <div className="flex-1 flex items-center justify-center text-cyan-800 font-mono text-sm animate-pulse">暗号解読中...</div>
+                  <div className="flex-1 flex items-center justify-center text-cyan-500 font-mono text-base animate-pulse font-bold tracking-widest">暗号解読中...</div>
                 ) : msg ? (
                   <div className="flex-1 animate-reveal">
-                    <p className="text-white font-serif text-lg leading-relaxed">{msg}</p>
+                    <p className="text-white font-serif text-lg md:text-xl leading-loose tracking-wide">{msg}</p>
                   </div>
                 ) : (
-                  <div className="flex-1 flex items-center justify-center text-gray-800 font-mono text-[10px] tracking-[0.5em]">スタンバイ</div>
+                  <div className="flex-1 flex items-center justify-center text-cyan-900/50 font-mono text-sm tracking-[0.5em] font-bold">スタンバイ</div>
                 )}
 
                 {msg && (
-                  <button onClick={() => setMsg("")} className="mt-4 text-[10px] text-gray-600 hover:text-cyan-500 underline self-start font-mono">通信を切断</button>
+                  <button onClick={() => setMsg("")} className="mt-8 text-xs text-cyan-600 hover:text-cyan-400 underline self-end font-mono font-bold">通信を切断</button>
                 )}
               </div>
             </div>
           )}
         </div>
 
-        <button onClick={onReset} className="absolute bottom-4 right-6 text-[10px] text-gray-800 hover:text-white transition-all font-mono tracking-widest">
-          システム再起動
-        </button>
+        <div className="flex justify-center mt-12">
+          <button onClick={onReset} className="px-8 py-3 text-xs text-gray-400 hover:text-white transition-all font-mono tracking-[0.3em] border border-gray-700 rounded-full hover:bg-gray-800">
+            システム再起動
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -495,7 +520,7 @@ export default function App() {
   };
 
   return (
-    <div className="bg-space min-h-screen selection:bg-cyan-500/30 text-gray-200 overflow-x-hidden font-sans">
+    <div className="bg-space min-h-screen selection:bg-cyan-500/30 overflow-x-hidden font-sans">
       <style>{styles}</style>
       <div className="scanline"></div>
       
@@ -508,8 +533,8 @@ export default function App() {
             setIsMuted(audioRef.current.muted);
             if(!audioRef.current.muted) audioRef.current.play().catch(()=>{});
           }
-        }} className="fixed top-6 right-6 z-[200] p-3 rounded-full bg-black/50 border border-gray-800 text-gray-500 hover:text-white transition-all">
-          {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+        }} className="fixed top-6 right-6 z-[200] p-4 rounded-full bg-black/60 border border-gray-700 text-gray-300 hover:text-white transition-all shadow-lg backdrop-blur-sm">
+          {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
         </button>
       )}
 
@@ -520,14 +545,14 @@ export default function App() {
       </main>
 
       {/* Footer Branding with Reference */}
-      <footer className="fixed bottom-4 left-6 z-10 hidden md:block">
+      <footer className="fixed bottom-4 left-6 z-10 hidden md:block text-gray-100">
         <div className="flex flex-col gap-1">
-          <div className="text-[8px] text-cyan-800/50 font-mono tracking-wider">
+          <div className="text-[9px] text-cyan-600/70 font-mono tracking-wider font-bold">
             [REF] 厚生労働省 令和元年簡易生命表 / 健康寿命データ
           </div>
-          <div className="flex items-center gap-2 opacity-20 hover:opacity-50 transition-all cursor-default">
-            <Zap className="w-3 h-3 text-cyan-500" />
-            <span className="text-[10px] font-mono tracking-widest text-cyan-500">神台ヤマト・システムズ株式会社</span>
+          <div className="flex items-center gap-2 opacity-40 hover:opacity-100 transition-all cursor-default">
+            <Zap className="w-4 h-4 text-cyan-400" />
+            <span className="text-xs font-mono tracking-widest text-cyan-400 font-bold">神台ヤマト・システムズ株式会社</span>
           </div>
         </div>
       </footer>
