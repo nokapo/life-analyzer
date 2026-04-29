@@ -11,20 +11,20 @@ import {
 
 /**
  * AI寿命判定システム (Professional Mobile First UI Version)
- * 特徴: iPhone等のスマホ画面に最適化。適切な余白、視認性の高いタイポグラフィ、モダンなカードUI。
+ * 特徴: iPhone(iOS Safari)での表示崩れを完全解消。Geminiプレビューの美しさをそのまま実機で再現。
  */
 
 const styles = `
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
 
   :root {
     color-scheme: dark;
-    background-color: #020617;
+    background-color: #0B0F19;
   }
 
   body, html, #root {
-    background-color: #020617 !important; /* Tailwind slate-950 */
-    color: #f8fafc !important; /* Tailwind slate-50 */
+    background-color: #0B0F19 !important; /* より深みのあるネイビー背景 */
+    color: #F8FAFC !important;
     font-family: 'Inter', 'Noto Sans JP', sans-serif;
     -webkit-font-smoothing: antialiased;
     margin: 0;
@@ -32,90 +32,153 @@ const styles = `
     min-height: 100vh;
   }
 
-  /* 背景の装飾的な光 */
+  /* プレビュー画面と同じ控えめな背景の光 */
   .bg-glow {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: 
-      radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15), transparent 25%),
-      radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.1), transparent 25%);
+    background: radial-gradient(circle at top center, rgba(99, 102, 241, 0.12), transparent 50%);
     z-index: -1;
     pointer-events: none;
   }
 
-  /* グラスモーフィズム調のカード */
+  /* グラスモーフィズム調のカード (プレビュー再現) */
   .glass-card {
-    background: rgba(15, 23, 42, 0.6); /* slate-900 with opacity */
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 1.5rem;
-    padding: 1.5rem;
+    background: #111827 !important; /* 安定したダークネイビー */
+    border: 1px solid #1F2937 !important;
+    border-radius: 1.25rem !important;
+    padding: 1.5rem !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
   }
 
-  /* ネイティブっぽさを残しつつ綺麗なセレクトボックス */
+  /* 確実な3列・2列レイアウト (Tailwindパージ対策) */
+  .flex-3-cols {
+    display: flex !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+  .flex-3-cols > * { flex: 1 !important; }
+  
+  .grid-2-cols {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem !important;
+  }
+
+  /* iOS Safariのデフォルトスタイルを完全に上書きするセレクトボックス */
   .ui-select {
-    width: 100%;
-    appearance: none;
-    background-color: #0f172a; /* slate-900 */
-    border: 1px solid #334155; /* slate-700 */
-    color: #f1f5f9; /* slate-100 */
-    border-radius: 0.75rem;
-    padding: 0.875rem 1rem;
-    font-size: 16px; /* iOS自動ズーム防止のため16px以上必須 */
-    font-weight: 500;
-    outline: none;
-    transition: border-color 0.2s;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-    background-position: right 1rem center;
-    background-repeat: no-repeat;
-    background-size: 1.2em 1.2em;
+    width: 100% !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    background-color: #1F2937 !important;
+    border: 1px solid #374151 !important;
+    color: #F8FAFC !important;
+    border-radius: 0.75rem !important;
+    padding: 0.875rem 1rem !important;
+    font-size: 16px !important; /* iOS自動ズーム防止 */
+    font-weight: 500 !important;
+    outline: none !important;
+    transition: border-color 0.2s !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+    background-position: right 1rem center !important;
+    background-repeat: no-repeat !important;
+    background-size: 1.2em 1.2em !important;
+    cursor: pointer !important;
   }
 
   .ui-select:focus {
-    border-color: #6366f1; /* indigo-500 */
+    border-color: #8B5CF6 !important;
   }
 
-  /* グラデーションボタン */
+  /* グラデーションボタン (プレビュー再現) */
   .btn-primary {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    background: linear-gradient(135deg, #6366f1 0%, #d946ef 100%);
-    color: white;
-    font-weight: 800;
-    font-size: 1.125rem;
-    padding: 1.125rem;
-    border-radius: 1rem;
-    border: none;
-    box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
-    cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.1s;
-    letter-spacing: 0.05em;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    background: linear-gradient(135deg, #8B5CF6 0%, #D946EF 100%) !important;
+    color: #FFFFFF !important;
+    font-weight: 800 !important;
+    font-size: 1.125rem !important;
+    padding: 1.125rem !important;
+    border-radius: 0.75rem !important;
+    border: none !important;
+    box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.4) !important;
+    cursor: pointer !important;
+    transition: transform 0.1s, box-shadow 0.1s !important;
+    letter-spacing: 0.05em !important;
   }
 
   .btn-primary:active {
-    transform: scale(0.98);
-    box-shadow: 0 5px 15px -3px rgba(99, 102, 241, 0.4);
+    transform: scale(0.98) !important;
+    box-shadow: 0 5px 15px -3px rgba(139, 92, 246, 0.4) !important;
+  }
+
+  /* テキストのスタイル強制 (iPhoneで暗くなる問題の解消) */
+  .text-title {
+    color: #FFFFFF !important;
+    font-size: 2rem !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.025em !important;
+    margin-bottom: 0.5rem !important;
+  }
+  .text-subtitle {
+    color: #9CA3AF !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+  }
+  .label-text {
+    display: block !important;
+    color: #D1D5DB !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.375rem !important;
+  }
+  .section-title {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 1.25rem !important;
+  }
+  .text-cyan { color: #38BDF8 !important; }
+  .text-pink { color: #F472B6 !important; }
+
+  /* 判定結果画面用 */
+  .result-label {
+    color: #9CA3AF !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.25rem !important;
+  }
+  .result-value-sm {
+    color: #FFFFFF !important;
+    font-size: 2.25rem !important;
+    font-weight: 900 !important;
+  }
+  .result-unit {
+    color: #6B7280 !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    margin-left: 0.25rem !important;
   }
 
   /* プログレスバー */
   .progress-track {
-    background-color: #1e293b; /* slate-800 */
-    height: 12px;
-    border-radius: 999px;
-    overflow: hidden;
+    background-color: #1F2937 !important;
+    height: 12px !important;
+    border-radius: 999px !important;
+    overflow: hidden !important;
   }
-
   .progress-fill {
-    background: linear-gradient(90deg, #6366f1, #ec4899);
-    height: 100%;
-    border-radius: 999px;
-    transition: width 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    background: linear-gradient(90deg, #8B5CF6, #F472B6) !important;
+    height: 100% !important;
+    border-radius: 999px !important;
+    transition: width 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
   }
 `;
 
@@ -222,28 +285,28 @@ function InputScreen({ onCalculate }) {
       
       {/* Header */}
       <div className="text-center mb-10 w-full">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-500/10 text-indigo-400 mb-4 border border-indigo-500/20">
-          <HeartPulse size={32} />
+        <div className="flex justify-center mb-3">
+          <HeartPulse size={48} color="#818CF8" />
         </div>
-        <h1 className="text-3xl font-extrabold tracking-tight text-white mb-2">AI寿命判定</h1>
-        <p className="text-sm text-slate-400 font-medium">あなたの残された時間を予測します</p>
+        <h1 className="text-title">AI寿命判定</h1>
+        <p className="text-subtitle">あなたの残された時間を予測します</p>
       </div>
 
       <form onSubmit={(e) => {
         e.preventDefault();
         localStorage.setItem('lifeAnalyzer_pro', JSON.stringify(formData));
         onCalculate(formData);
-      }} className="w-full space-y-6">
+      }} className="w-full flex flex-col gap-6">
         
         {/* Basic Data Card */}
         <div className="glass-card">
-          <h2 className="flex items-center gap-2 text-sm font-bold text-cyan-400 mb-5 uppercase tracking-widest">
-            <User size={16} /> 基本データ
+          <h2 className="section-title text-cyan">
+            <User size={18} /> 基本データ
           </h2>
-          <div className="space-y-4">
+          <div className="flex flex-col gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1.5 ml-1">生年月日</label>
-              <div className="grid grid-cols-3 gap-2">
+              <label className="label-text">生年月日</label>
+              <div className="flex-3-cols">
                 <select value={formData.birthYear} onChange={e => setFormData({...formData, birthYear: e.target.value})} className="ui-select">
                   {years.map(y => <option key={y} value={y}>{y}年</option>)}
                 </select>
@@ -256,7 +319,7 @@ function InputScreen({ onCalculate }) {
               </div>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1.5 ml-1">性別</label>
+              <label className="label-text">性別</label>
               <select value={formData.gender} onChange={e => setFormData({...formData, gender: e.target.value})} className="ui-select">
                 <option value="male">男性</option>
                 <option value="female">女性</option>
@@ -267,12 +330,12 @@ function InputScreen({ onCalculate }) {
 
         {/* Lifestyle Card */}
         <div className="glass-card">
-          <h2 className="flex items-center gap-2 text-sm font-bold text-pink-400 mb-5 uppercase tracking-widest">
-            <Activity size={16} /> ライフスタイル
+          <h2 className="section-title text-pink">
+            <Activity size={18} /> ライフスタイル
           </h2>
-          <div className="space-y-4">
+          <div className="flex flex-col gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1.5 ml-1">喫煙習慣</label>
+              <label className="label-text">喫煙習慣</label>
               <select value={formData.smoking} onChange={e => setFormData({...formData, smoking: e.target.value})} className="ui-select">
                 <option value="none">吸わない</option>
                 <option value="sometimes">時々吸う</option>
@@ -280,7 +343,7 @@ function InputScreen({ onCalculate }) {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1.5 ml-1">飲酒習慣</label>
+              <label className="label-text">飲酒習慣</label>
               <select value={formData.drinking} onChange={e => setFormData({...formData, drinking: e.target.value})} className="ui-select">
                 <option value="none">飲まない</option>
                 <option value="sometimes">時々飲む</option>
@@ -288,7 +351,7 @@ function InputScreen({ onCalculate }) {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1.5 ml-1">睡眠の状態</label>
+              <label className="label-text">睡眠の状態</label>
               <select value={formData.sleep} onChange={e => setFormData({...formData, sleep: e.target.value})} className="ui-select">
                 <option value="short">不足している</option>
                 <option value="normal">普通</option>
@@ -298,9 +361,9 @@ function InputScreen({ onCalculate }) {
           </div>
         </div>
 
-        <div className="pt-4">
+        <div className="pt-2">
           <button type="submit" className="btn-primary">
-            寿命を予測する <ChevronRight size={20} className="ml-1" />
+            寿命を予測する <ChevronRight size={20} style={{ marginLeft: '4px' }} />
           </button>
         </div>
       </form>
@@ -311,11 +374,11 @@ function InputScreen({ onCalculate }) {
 function LoadingScreen() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-5">
-      <div className="relative mb-8">
-        <HeartPulse size={64} className="text-indigo-500 animate-ping absolute inset-0 opacity-30" />
-        <Sparkles size={64} className="text-pink-500 animate-pulse relative" />
+      <div style={{ position: 'relative', marginBottom: '2rem' }}>
+        <HeartPulse size={64} style={{ color: '#8B5CF6', position: 'absolute', opacity: 0.3, animation: 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite' }} />
+        <Sparkles size={64} style={{ color: '#F472B6', animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }} />
       </div>
-      <p className="text-sm font-bold text-slate-300 tracking-[0.2em] uppercase animate-pulse">
+      <p style={{ color: '#D1D5DB', fontSize: '0.875rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', animation: 'pulse 2s infinite' }}>
         Calculating Future...
       </p>
     </div>
@@ -344,54 +407,54 @@ function ResultScreen({ result, formData, onReset }) {
     <div className="min-h-screen py-10 px-5 max-w-md mx-auto flex flex-col gap-6">
       
       {/* Header Title */}
-      <h2 className="text-center text-xl font-bold tracking-widest text-slate-200 mt-2">判定結果レポート</h2>
+      <h2 style={{ color: '#FFFFFF', fontSize: '1.25rem', fontWeight: 800, textAlign: 'center', letterSpacing: '0.1em', marginTop: '0.5rem' }}>判定結果レポート</h2>
 
       {/* 予測年齢 Card */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="glass-card text-center p-5">
-          <p className="text-xs text-slate-400 font-bold mb-1">予測健康寿命</p>
-          <div className="text-3xl font-extrabold text-white">
-            {result.healthAge}<span className="text-sm font-medium text-slate-500 ml-1">歳</span>
+      <div className="grid-2-cols">
+        <div className="glass-card" style={{ textAlign: 'center', padding: '1.25rem' }}>
+          <p className="result-label">予測健康寿命</p>
+          <div className="result-value-sm">
+            {result.healthAge}<span className="result-unit">歳</span>
           </div>
         </div>
-        <div className="glass-card text-center p-5">
-          <p className="text-xs text-slate-400 font-bold mb-1">予測平均寿命</p>
-          <div className="text-3xl font-extrabold text-white">
-            {result.lifeAge}<span className="text-sm font-medium text-slate-500 ml-1">歳</span>
+        <div className="glass-card" style={{ textAlign: 'center', padding: '1.25rem' }}>
+          <p className="result-label">予測平均寿命</p>
+          <div className="result-value-sm">
+            {result.lifeAge}<span className="result-unit">歳</span>
           </div>
         </div>
       </div>
 
       {/* メイン: 残り日数 Card */}
-      <div className="glass-card p-8 text-center relative overflow-hidden border-indigo-500/30">
-        <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/5 to-transparent pointer-events-none"></div>
+      <div className="glass-card" style={{ padding: '2rem 1.5rem', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to bottom, rgba(139, 92, 246, 0.05), transparent)', pointerEvents: 'none' }}></div>
         
-        <div className="mb-8">
-          <p className="text-xs font-bold text-indigo-400 tracking-widest mb-3">健康でいられる残り日数</p>
-          <div className="flex items-baseline justify-center">
-            <span className={`text-6xl font-black tracking-tighter ${result.isHealthOver ? 'text-red-500' : 'text-white'}`}>
+        <div style={{ marginBottom: '2rem' }}>
+          <p style={{ color: '#818CF8', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.1em', marginBottom: '0.75rem' }}>健康でいられる残り日数</p>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center' }}>
+            <span style={{ fontSize: '3.75rem', fontWeight: 900, color: result.isHealthOver ? '#EF4444' : '#FFFFFF', letterSpacing: '-0.05em', lineHeight: 1 }}>
               {result.isHealthOver ? "LIMIT" : result.healthDays.toLocaleString()}
             </span>
-            {!result.isHealthOver && <span className="text-xl text-slate-500 font-bold ml-1">日</span>}
+            {!result.isHealthOver && <span style={{ color: '#6B7280', fontSize: '1.25rem', fontWeight: 700, marginLeft: '0.25rem' }}>日</span>}
           </div>
         </div>
         
         <div>
-          <p className="text-xs font-bold text-pink-400 tracking-widest mb-3">生命の残り日数</p>
-          <div className="flex items-baseline justify-center">
-            <span className="text-5xl font-black text-pink-500 tracking-tighter">
+          <p style={{ color: '#F472B6', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.1em', marginBottom: '0.75rem' }}>生命の残り日数</p>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center' }}>
+            <span style={{ fontSize: '3rem', fontWeight: 900, color: '#F472B6', letterSpacing: '-0.05em', lineHeight: 1 }}>
               {result.isLifeOver ? "ERR" : result.lifeDays.toLocaleString()}
             </span>
-            {!result.isLifeOver && <span className="text-lg text-slate-500 font-bold ml-1">日</span>}
+            {!result.isLifeOver && <span style={{ color: '#6B7280', fontSize: '1.125rem', fontWeight: 700, marginLeft: '0.25rem' }}>日</span>}
           </div>
         </div>
       </div>
 
       {/* 進行度 Card */}
-      <div className="glass-card p-6">
-        <div className="flex justify-between items-end mb-3">
-          <p className="text-xs font-bold text-slate-400">人生の進行度</p>
-          <p className="text-xl font-bold text-white">{result.progressRate}%</p>
+      <div className="glass-card" style={{ padding: '1.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '0.75rem' }}>
+          <p style={{ color: '#9CA3AF', fontSize: '0.75rem', fontWeight: 700 }}>人生の進行度</p>
+          <p style={{ color: '#FFFFFF', fontSize: '1.25rem', fontWeight: 800 }}>{result.progressRate}%</p>
         </div>
         <div className="progress-track">
           <div className="progress-fill" style={{width: `${result.progressRate}%`}}></div>
@@ -399,18 +462,18 @@ function ResultScreen({ result, formData, onReset }) {
       </div>
 
       {/* メッセージ Card */}
-      <div className="glass-card p-6 border-l-4 border-indigo-500">
-        <div className="flex items-center gap-2 mb-4">
-          <MessageCircle size={16} className="text-indigo-400" />
-          <span className="text-xs font-bold text-indigo-400 tracking-widest">
+      <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid #8B5CF6' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+          <MessageCircle size={16} color="#818CF8" />
+          <span style={{ color: '#818CF8', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.1em' }}>
             {channel === 'ai' ? 'AI診断レポート' : 'キャラクターからの意見'}
           </span>
         </div>
-        <div className="min-h-[80px] flex items-center">
+        <div style={{ minHeight: '80px', display: 'flex', alignItems: 'center' }}>
           {loading ? (
-             <div className="w-full text-center text-slate-500 text-sm animate-pulse">受信中...</div>
+             <div style={{ width: '100%', textAlign: 'center', color: '#6B7280', fontSize: '0.875rem' }}>受信中...</div>
           ) : (
-            <p className="text-slate-100 text-[15px] leading-relaxed font-medium">
+            <p style={{ color: '#F3F4F6', fontSize: '0.9375rem', lineHeight: 1.6, fontWeight: 500, margin: 0 }}>
               {msg}
             </p>
           )}
@@ -418,9 +481,9 @@ function ResultScreen({ result, formData, onReset }) {
       </div>
 
       {/* キャラクター選択 Grid */}
-      <div className="mt-2">
-        <p className="text-center text-xs text-slate-500 mb-3 font-bold">別の意見を聞く</p>
-        <div className="grid grid-cols-4 gap-2">
+      <div style={{ marginTop: '0.5rem' }}>
+        <p style={{ textAlign: 'center', color: '#6B7280', fontSize: '0.75rem', fontWeight: 700, marginBottom: '0.75rem' }}>別の意見を聞く</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
           {[
             {id: 'gal', name: 'ギャル', icon: '💅'},
             {id: 'okan', name: 'オカン', icon: '👩‍🦳'},
@@ -430,18 +493,29 @@ function ResultScreen({ result, formData, onReset }) {
             <button 
               key={c.id} 
               onClick={() => handleFetch(c.id)} 
-              className={`flex flex-col items-center justify-center p-3 rounded-xl transition-colors border ${channel === c.id ? 'bg-indigo-500/20 border-indigo-500 text-white' : 'bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-800'}`}
+              style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                padding: '0.75rem', borderRadius: '0.75rem', transition: 'all 0.2s', border: '1px solid',
+                backgroundColor: channel === c.id ? 'rgba(139, 92, 246, 0.2)' : '#111827',
+                borderColor: channel === c.id ? '#8B5CF6' : '#1F2937',
+                color: channel === c.id ? '#FFFFFF' : '#9CA3AF',
+                cursor: 'pointer'
+              }}
             >
-              <span className="text-2xl mb-1">{c.icon}</span>
-              <span className="text-[10px] font-bold">{c.name}</span>
+              <span style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>{c.icon}</span>
+              <span style={{ fontSize: '0.625rem', fontWeight: 700, color: '#FFFFFF' }}>{c.name}</span>
             </button>
           ))}
         </div>
       </div>
 
       {/* 再実行 Button */}
-      <div className="mt-8 flex justify-center pb-8">
-        <button onClick={onReset} className="flex items-center gap-2 text-slate-400 hover:text-white text-sm font-bold px-6 py-3 transition-colors bg-slate-900 rounded-full border border-slate-800">
+      <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'center', paddingBottom: '2rem' }}>
+        <button onClick={onReset} style={{
+          display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#9CA3AF', fontSize: '0.875rem',
+          fontWeight: 700, padding: '0.75rem 1.5rem', backgroundColor: '#111827', borderRadius: '9999px',
+          border: '1px solid #1F2937', cursor: 'pointer', transition: 'color 0.2s'
+        }}>
           <RefreshCw size={16} /> 最初からやり直す
         </button>
       </div>
@@ -463,7 +537,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen w-full relative overflow-hidden bg-[#020617] text-white">
+    <div className="min-h-screen w-full relative overflow-hidden bg-[#0B0F19]">
       <style>{styles}</style>
       <div className="bg-glow"></div>
       <div className="relative z-10 w-full h-full min-h-screen">
