@@ -235,7 +235,7 @@ function InputScreen({ onCalculate }) {
           <Activity className="text-cyan-400 w-10 h-10 glow-text-cyan flex-shrink-0" />
           <div>
             <h1 className="text-2xl md:text-3xl font-bold tracking-widest text-white glow-text-cyan">生命活動予測システム</h1>
-            <p className="text-xs text-cyan-500 font-mono mt-2">システムバージョン 4.0 // プレミアム版</p>
+            <p className="text-xs text-cyan-500 font-mono mt-2">システムバージョン 1.0 // プレミアム版</p>
           </div>
         </div>
 
@@ -249,25 +249,25 @@ function InputScreen({ onCalculate }) {
           onCalculate({ ...formData, birthDate });
         }} className="space-y-8">
           
-          <section className="space-y-4 bg-black/20 p-4 md:p-6 rounded-xl border border-gray-800/50">
-            <h2 className="text-sm font-mono text-cyan-400 flex items-center gap-2 mb-4">
-              <User className="w-4 h-4" /> 個体識別データ
+          <section className="space-y-4 bg-cyan-950/60 p-5 md:p-6 rounded-xl border border-cyan-500/50 shadow-[0_0_15px_rgba(0,242,255,0.1)] backdrop-blur-md">
+            <h2 className="text-base font-mono text-cyan-300 flex items-center gap-2 mb-4 font-bold">
+              <User className="w-5 h-5" /> 個体識別データ
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
-                <label className="text-xs text-gray-400 ml-1 font-bold">誕生年</label>
+                <label className="text-xs text-cyan-200 ml-1 font-bold">誕生年</label>
                 <select value={formData.birthYear} onChange={e => setFormData({...formData, birthYear: e.target.value})} className="input-field w-full p-4 rounded-lg font-mono">
                   {years.map(y => <option key={y} value={y}>{y}年</option>)}
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="text-xs text-gray-400 ml-1 font-bold">月</label>
+                <label className="text-xs text-cyan-200 ml-1 font-bold">月</label>
                 <select value={formData.birthMonth} onChange={e => setFormData({...formData, birthMonth: e.target.value})} className="input-field w-full p-4 rounded-lg font-mono">
                   {Array.from({length:12}, (_, i) => i+1).map(m => <option key={m} value={m}>{m}月</option>)}
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="text-xs text-gray-400 ml-1 font-bold">日</label>
+                <label className="text-xs text-cyan-200 ml-1 font-bold">日</label>
                 <select value={formData.birthDay} onChange={e => setFormData({...formData, birthDay: e.target.value})} className="input-field w-full p-4 rounded-lg font-mono">
                   {Array.from({length:31}, (_, i) => i+1).map(d => <option key={d} value={d}>{d}日</option>)}
                 </select>
@@ -275,11 +275,11 @@ function InputScreen({ onCalculate }) {
             </div>
             
             <div className="space-y-2 pt-4">
-              <label className="text-xs text-gray-400 ml-1 font-bold">性別</label>
+              <label className="text-xs text-cyan-200 ml-1 font-bold">性別</label>
               <div className="flex gap-4">
                 {['male', 'female'].map(g => (
                   <button key={g} type="button" onClick={() => setFormData({...formData, gender: g})} 
-                    className={`flex-1 p-4 rounded-lg font-bold text-base transition-all border-2 ${formData.gender === g ? 'bg-cyan-900/60 border-cyan-400 text-white shadow-[0_0_15px_rgba(0,242,255,0.4)]' : 'bg-black/60 border-gray-700 text-gray-400 hover:border-gray-500 hover:bg-black/80'}`}>
+                    className={`flex-1 p-4 rounded-lg font-bold text-base transition-all border-2 ${formData.gender === g ? 'bg-cyan-600/80 border-cyan-300 text-white shadow-[0_0_15px_rgba(0,242,255,0.6)]' : 'bg-black/60 border-cyan-800/80 text-cyan-200 hover:border-cyan-500 hover:bg-black/80'}`}>
                     {g === 'male' ? '男性' : '女性'}
                   </button>
                 ))}
@@ -287,25 +287,25 @@ function InputScreen({ onCalculate }) {
             </div>
           </section>
 
-          <section className="space-y-4 bg-black/20 p-4 md:p-6 rounded-xl border border-gray-800/50">
-            <h2 className="text-sm font-mono text-cyan-400 flex items-center gap-2 mb-4">
-              <ShieldAlert className="w-4 h-4" /> 生命リスク要因
+          <section className="space-y-4 bg-cyan-950/60 p-5 md:p-6 rounded-xl border border-cyan-500/50 shadow-[0_0_15px_rgba(0,242,255,0.1)] backdrop-blur-md">
+            <h2 className="text-base font-mono text-cyan-300 flex items-center gap-2 mb-4 font-bold">
+              <ShieldAlert className="w-5 h-5" /> 生命リスク要因
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
-                <label className="text-xs text-gray-400 flex items-center gap-1 font-bold"><Wind className="w-4 h-4 text-gray-500" /> 喫煙</label>
+                <label className="text-xs text-cyan-200 flex items-center gap-1 font-bold"><Wind className="w-4 h-4 text-cyan-400" /> 喫煙</label>
                 <select value={formData.smoking} onChange={e => setFormData({...formData, smoking: e.target.value})} className="input-field w-full p-4 rounded-lg font-bold">
                   <option value="none">なし</option><option value="sometimes">時々</option><option value="everyday">毎日</option>
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="text-xs text-gray-400 flex items-center gap-1 font-bold"><Coffee className="w-4 h-4 text-gray-500" /> 飲酒</label>
+                <label className="text-xs text-cyan-200 flex items-center gap-1 font-bold"><Coffee className="w-4 h-4 text-cyan-400" /> 飲酒</label>
                 <select value={formData.drinking} onChange={e => setFormData({...formData, drinking: e.target.value})} className="input-field w-full p-4 rounded-lg font-bold">
                   <option value="none">なし</option><option value="sometimes">時々</option><option value="everyday">毎日</option>
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="text-xs text-gray-400 flex items-center gap-1 font-bold"><Moon className="w-4 h-4 text-gray-500" /> 睡眠</label>
+                <label className="text-xs text-cyan-200 flex items-center gap-1 font-bold"><Moon className="w-4 h-4 text-cyan-400" /> 睡眠</label>
                 <select value={formData.sleep} onChange={e => setFormData({...formData, sleep: e.target.value})} className="input-field w-full p-4 rounded-lg font-bold">
                   <option value="short">不足</option><option value="normal">普通</option><option value="good">十分</option>
                 </select>
@@ -313,17 +313,9 @@ function InputScreen({ onCalculate }) {
             </div>
           </section>
 
-          <button type="submit" className="btn-primary w-full py-6 mt-4 rounded-xl text-white font-bold tracking-[0.5em] text-lg md:text-xl shadow-lg shadow-red-900/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
+          <button type="submit" className="btn-primary w-full py-10 mt-8 rounded-2xl text-white font-bold tracking-[0.5em] text-2xl md:text-3xl shadow-2xl shadow-red-900/50 hover:scale-[1.02] active:scale-[0.98] transition-all">
             解析シーケンス開始
           </button>
-          
-          {/* Reference Data Disclosure */}
-          <div className="mt-8 text-[10px] text-cyan-600 font-mono text-center leading-relaxed bg-cyan-950/20 p-4 rounded-lg border border-cyan-900/30">
-            [ REFERENCE DATA ]<br/>
-            本システムの予測ベース値は、厚生労働省「令和元年簡易生命表」<br/>
-            および「健康寿命の令和元年値」の統計データを参照しています。<br/>
-            ※生活習慣による寿命増減は独自シミュレーションに基づく推計です。
-          </div>
         </form>
       </div>
     </div>
@@ -543,19 +535,6 @@ export default function App() {
         {step === 'loading' && <LoadingScreen />}
         {step === 'result' && <ResultScreen result={result} formData={data} onReset={() => setStep('input')} />}
       </main>
-
-      {/* Footer Branding with Reference */}
-      <footer className="fixed bottom-4 left-6 z-10 hidden md:block text-gray-100">
-        <div className="flex flex-col gap-1">
-          <div className="text-[9px] text-cyan-600/70 font-mono tracking-wider font-bold">
-            [REF] 厚生労働省 令和元年簡易生命表 / 健康寿命データ
-          </div>
-          <div className="flex items-center gap-2 opacity-40 hover:opacity-100 transition-all cursor-default">
-            <Zap className="w-4 h-4 text-cyan-400" />
-            <span className="text-xs font-mono tracking-widest text-cyan-400 font-bold">神台ヤマト・システムズ株式会社</span>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
