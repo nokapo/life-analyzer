@@ -1,60 +1,119 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Activity, Calendar, User, Wind, Coffee, Moon, AlertTriangle, Volume2, VolumeX } from 'lucide-react';
+import { 
+  Activity, 
+  User, 
+  Wind, 
+  Coffee, 
+  Moon, 
+  AlertCircle, 
+  Volume2, 
+  VolumeX, 
+  Navigation,
+  ShieldAlert,
+  Zap,
+  BarChart3
+} from 'lucide-react';
 
 /**
- * 宇宙戦艦風 生命活動予測アプリ (GitHub Pages Optimized Version)
- * 特徴: APIキー不要。キャラクターメッセージは内蔵ロジックで生成されます。
+ * 宇宙戦艦風 生命活動予測システム (Premium UI Version)
+ * 特徴: 高度なSFインターフェースデザイン、API不要のローカルロジック。
  */
 
 const styles = `
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@700;900&family=Share+Tech+Mono&display=swap');
 
-  .yamato-font {
-    font-family: 'Noto Serif JP', serif;
+  :root {
+    --hull-color: #0a0c10;
+    --panel-color: rgba(20, 25, 35, 0.85);
+    --accent-red: #ff3333;
+    --accent-cyan: #00f2ff;
+    --border-color: rgba(0, 242, 255, 0.2);
   }
 
-  .fade-in-text {
-    opacity: 0;
-    animation: fadeIn 2s forwards;
+  .font-mono { font-family: 'Share Tech Mono', monospace; }
+  .font-serif { font-family: 'Noto Serif JP', serif; }
+
+  .bg-space {
+    background-color: var(--hull-color);
+    background-image: 
+      radial-gradient(circle at 50% 50%, rgba(20, 30, 50, 1) 0%, rgba(5, 5, 10, 1) 100%),
+      linear-gradient(rgba(0, 242, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
+    background-size: 100% 100%, 40px 40px, 40px 40px;
   }
 
-  .delay-1 { animation-delay: 0.5s; }
-  .delay-2 { animation-delay: 2s; }
-  .delay-3 { animation-delay: 3.5s; }
-  .delay-4 { animation-delay: 5.5s; }
-  .delay-5 { animation-delay: 8s; }
-
-  .flash-red {
-    color: #ff3333;
-    text-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
-    animation: pulse-red 3s infinite;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes pulse-red {
-    0% { opacity: 1; text-shadow: 0 0 15px rgba(255, 0, 0, 0.8); }
-    50% { opacity: 0.8; text-shadow: 0 0 5px rgba(255, 0, 0, 0.4); }
-    100% { opacity: 1; text-shadow: 0 0 15px rgba(255, 0, 0, 0.8); }
+  .glass-panel {
+    background: var(--panel-color);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(0, 242, 255, 0.05);
   }
 
   .scanline {
-    width: 100%;
-    height: 100px;
-    z-index: 50;
-    position: absolute;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 2px;
+    background: rgba(0, 242, 255, 0.1);
+    opacity: 0.5;
+    z-index: 100;
     pointer-events: none;
-    background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(255,0,0,0.1) 50%, rgba(0,0,0,0) 100%);
-    opacity: 0.1;
-    animation: scan 8s linear infinite;
+    animation: scan 10s linear infinite;
   }
 
   @keyframes scan {
-    0% { top: -100px; }
-    100% { top: 100%; }
+    0% { transform: translateY(-100px); }
+    100% { transform: translateY(100vh); }
+  }
+
+  .glow-text-red {
+    text-shadow: 0 0 10px rgba(255, 51, 51, 0.8), 0 0 20px rgba(255, 51, 51, 0.4);
+  }
+
+  .glow-text-cyan {
+    text-shadow: 0 0 10px rgba(0, 242, 255, 0.8);
+  }
+
+  .animate-reveal {
+    animation: reveal 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    opacity: 0;
+  }
+
+  @keyframes reveal {
+    from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+
+  .input-field {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 242, 255, 0.2);
+    color: white;
+    transition: all 0.3s;
+  }
+
+  .input-field:focus {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
+    outline: none;
+  }
+
+  .btn-primary {
+    background: linear-gradient(180deg, rgba(255, 51, 51, 0.2) 0%, rgba(150, 0, 0, 0.4) 100%);
+    border: 1px solid var(--accent-red);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%; width: 200%; height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: rotate(45deg);
+    animation: shine 3s infinite;
+  }
+
+  @keyframes shine {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
   }
 `;
 
@@ -72,7 +131,7 @@ const generateLocalMessage = (data, result, channel) => {
     muscle: {
       good: `ナイスバルク！素晴らしい規律だ！君の細胞が喜んでいるぞ！このままプロテインと筋肉を信じて、最強の肉体を維持するんだ！マッスル！`,
       bad: `コラァ！そんな不摂生は筋肉への冒涜だ！筋肉をいじめるな！今すぐスクワット100回、プロテイン1リットルだ！筋肉は裏切らないぞ！`,
-      normal: `悪くない！だがもっと追い込めるはずだ。食事、睡眠、そしてトレーニング。この三位一体が君の寿命をパンプアップさせるんだ！`
+      normal: `悪くない！だがもっと追い込めるはずだ。食事、睡眠、トレーニング。この三位一体が君の寿命をパンプアップさせるんだ！`
     },
     okan: {
       good: `あんた、えらい健康的やん。おかん安心したわ。ちゃんと食べて寝てるんやね。この調子で自分の体、大事にせなあかんで。`,
@@ -95,7 +154,6 @@ const generateLocalMessage = (data, result, channel) => {
   return messages[channel][type];
 };
 
-// --- 解析ロジック ---
 const calculateLifeData = (data) => {
   const birth = new Date(data.birthDate);
   const now = new Date();
@@ -139,174 +197,280 @@ function InputScreen({ onCalculate }) {
     gender: 'male', smoking: 'none', drinking: 'none', sleep: 'normal'
   });
 
+  // 前回入力したデータをブラウザから読み込む処理を追加
   useEffect(() => {
-    const saved = localStorage.getItem('yamatoLifeData');
-    if (saved) setFormData(JSON.parse(saved));
+    const saved = localStorage.getItem('yamatoLifeData_premium');
+    if (saved) {
+      try {
+        setFormData(JSON.parse(saved));
+      } catch (e) {
+        console.error("保存データの読み込みに失敗しました");
+      }
+    }
   }, []);
 
-  const years = Array.from({ length: 110 }, (_, i) => new Date().getFullYear() - i);
-  const months = Array.from({ length: 12 }, (_, i) => String(i + 1));
-  const days = Array.from({ length: 31 }, (_, i) => String(i + 1));
-
+  const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i);
+  
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-200 flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900 via-gray-950 to-black z-0"></div>
-      <form onSubmit={(e) => {
-        e.preventDefault();
-        localStorage.setItem('yamatoLifeData', JSON.stringify(formData));
-        const birthDate = `${formData.birthYear}-${formData.birthMonth.padStart(2, '0')}-${formData.birthDay.padStart(2, '0')}`;
-        onCalculate({ ...formData, birthDate });
-      }} className="max-w-md w-full bg-gray-900/80 backdrop-blur border border-gray-800 p-8 rounded-lg shadow-2xl z-10 relative">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-900 via-red-600 to-red-900"></div>
-        <h1 className="text-2xl font-bold text-center mb-8 flex items-center justify-center gap-2">
-          <Activity className="text-red-500" /> 生命活動予測システム
-        </h1>
-        <div className="space-y-4">
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="glass-panel max-w-2xl w-full p-8 rounded-xl relative animate-reveal">
+        <div className="flex items-center gap-3 mb-8 border-b border-cyan-900/50 pb-4">
+          <Activity className="text-cyan-400 w-8 h-8 glow-text-cyan" />
           <div>
-            <label className="text-xs text-gray-400 mb-1 block font-mono">BIRTHDATE</label>
-            <div className="flex gap-2">
-              <select value={formData.birthYear} onChange={e => setFormData({...formData, birthYear: e.target.value})} className="flex-[2] bg-black border border-gray-700 rounded p-2 text-white">
-                {years.map(y => <option key={y} value={y}>{y}年</option>)}
-              </select>
-              <select value={formData.birthMonth} onChange={e => setFormData({...formData, birthMonth: e.target.value})} className="flex-1 bg-black border border-gray-700 rounded p-2 text-white">
-                {months.map(m => <option key={m} value={m}>{m}月</option>)}
-              </select>
-              <select value={formData.birthDay} onChange={e => setFormData({...formData, birthDay: e.target.value})} className="flex-1 bg-black border border-gray-700 rounded p-2 text-white">
-                {days.map(d => <option key={d} value={d}>{d}日</option>)}
-              </select>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs text-gray-400 mb-1 block font-mono">GENDER</label>
-              <select value={formData.gender} onChange={e => setFormData({...formData, gender: e.target.value})} className="w-full bg-black border border-gray-700 rounded p-2 text-white">
-                <option value="male">男性</option><option value="female">女性</option>
-              </select>
-            </div>
-            <div>
-              <label className="text-xs text-gray-400 mb-1 block font-mono">SMOKING</label>
-              <select value={formData.smoking} onChange={e => setFormData({...formData, smoking: e.target.value})} className="w-full bg-black border border-gray-700 rounded p-2 text-white">
-                <option value="none">なし</option><option value="sometimes">時々</option><option value="everyday">毎日</option>
-              </select>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs text-gray-400 mb-1 block font-mono">ALCOHOL</label>
-              <select value={formData.drinking} onChange={e => setFormData({...formData, drinking: e.target.value})} className="w-full bg-black border border-gray-700 rounded p-2 text-white">
-                <option value="none">なし</option><option value="sometimes">時々</option><option value="everyday">毎日</option>
-              </select>
-            </div>
-            <div>
-              <label className="text-xs text-gray-400 mb-1 block font-mono">SLEEP</label>
-              <select value={formData.sleep} onChange={e => setFormData({...formData, sleep: e.target.value})} className="w-full bg-black border border-gray-700 rounded p-2 text-white">
-                <option value="short">不足</option><option value="normal">普通</option><option value="good">十分</option>
-              </select>
-            </div>
+            <h1 className="text-xl font-bold tracking-widest text-white">生命活動予測システム</h1>
+            <p className="text-[10px] text-cyan-500 font-mono">システムバージョン 4.0 // プレミアム版</p>
           </div>
         </div>
-        <button type="submit" className="w-full bg-red-900/50 hover:bg-red-800 border border-red-800 text-white font-bold py-4 rounded tracking-widest transition-all mt-8">
-          ANALYZE START
-        </button>
-      </form>
-    </div>
-  );
-}
 
-function LoadingScreen() {
-  const [logs, setLogs] = useState([]);
-  useEffect(() => {
-    const msgs = ["INITIATING...", "ANALYZING BIOMETRICS...", "FETCHING STATS...", "SIMULATING TIME-AXIS...", "DECODING RESULTS...", "COMPLETE."];
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < msgs.length) { setLogs(p => [...p, msgs[i]]); i++; }
-      else clearInterval(interval);
-    }, 500);
-    return () => clearInterval(interval);
-  }, []);
-  return (
-    <div className="min-h-screen bg-black text-green-500 font-mono p-8 flex flex-col justify-end text-sm">
-      <div className="space-y-1 max-w-xl mx-auto w-full">
-        {logs.map((l, i) => <div key={i}>{'>'} {l}</div>)}
-        <div className="animate-pulse">{'>'} _</div>
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          
+          // 解析開始時に入力データをブラウザに保存する処理を追加
+          localStorage.setItem('yamatoLifeData_premium', JSON.stringify(formData));
+          
+          const birthDate = `${formData.birthYear}-${formData.birthMonth.padStart(2, '0')}-${formData.birthDay.padStart(2, '0')}`;
+          onCalculate({ ...formData, birthDate });
+        }} className="space-y-6">
+          
+          <section className="space-y-4">
+            <h2 className="text-xs font-mono text-cyan-600 flex items-center gap-2">
+              <User className="w-3 h-3" /> 個体識別データ
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-1">
+                <label className="text-[10px] text-gray-500 ml-1">誕生年</label>
+                <select value={formData.birthYear} onChange={e => setFormData({...formData, birthYear: e.target.value})} className="input-field w-full p-3 rounded font-mono text-sm">
+                  {years.map(y => <option key={y} value={y}>{y}年</option>)}
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] text-gray-400 ml-1">月</label>
+                <select value={formData.birthMonth} onChange={e => setFormData({...formData, birthMonth: e.target.value})} className="input-field w-full p-3 rounded font-mono text-sm">
+                  {Array.from({length:12}, (_, i) => i+1).map(m => <option key={m} value={m}>{m}月</option>)}
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] text-gray-400 ml-1">日</label>
+                <select value={formData.birthDay} onChange={e => setFormData({...formData, birthDay: e.target.value})} className="input-field w-full p-3 rounded font-mono text-sm">
+                  {Array.from({length:31}, (_, i) => i+1).map(d => <option key={d} value={d}>{d}日</option>)}
+                </select>
+              </div>
+            </div>
+            
+            <div className="space-y-1">
+              <label className="text-[10px] text-gray-400 ml-1">性別</label>
+              <div className="flex gap-2">
+                {['male', 'female'].map(g => (
+                  <button key={g} type="button" onClick={() => setFormData({...formData, gender: g})} 
+                    className={`flex-1 p-3 rounded font-mono text-xs transition-all ${formData.gender === g ? 'bg-cyan-900/50 border border-cyan-500 text-white' : 'bg-black/40 border border-gray-800 text-gray-500 hover:border-gray-600'}`}>
+                    {g === 'male' ? '男性' : '女性'}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="space-y-4 pt-4 border-t border-gray-800">
+            <h2 className="text-xs font-mono text-cyan-600 flex items-center gap-2">
+              <ShieldAlert className="w-3 h-3" /> 生命リスク要因
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-1">
+                <label className="text-[10px] text-gray-400 flex items-center gap-1"><Wind className="w-3 h-3" /> 喫煙</label>
+                <select value={formData.smoking} onChange={e => setFormData({...formData, smoking: e.target.value})} className="input-field w-full p-3 rounded text-xs">
+                  <option value="none">なし</option><option value="sometimes">時々</option><option value="everyday">毎日</option>
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] text-gray-400 flex items-center gap-1"><Coffee className="w-3 h-3" /> 飲酒</label>
+                <select value={formData.drinking} onChange={e => setFormData({...formData, drinking: e.target.value})} className="input-field w-full p-3 rounded text-xs">
+                  <option value="none">なし</option><option value="sometimes">時々</option><option value="everyday">毎日</option>
+                </select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] text-gray-400 flex items-center gap-1"><Moon className="w-3 h-3" /> 睡眠</label>
+                <select value={formData.sleep} onChange={e => setFormData({...formData, sleep: e.target.value})} className="input-field w-full p-3 rounded text-xs">
+                  <option value="short">不足</option><option value="normal">普通</option><option value="good">十分</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <button type="submit" className="btn-primary w-full py-5 rounded-lg text-white font-bold tracking-[0.5em] text-lg shadow-lg shadow-red-900/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
+            解析シーケンス開始
+          </button>
+          
+          {/* Reference Data Disclosure */}
+          <div className="mt-6 text-[10px] text-cyan-700/60 font-mono text-center leading-relaxed">
+            [ REFERENCE DATA ]<br/>
+            本システムの予測ベース値は、厚生労働省「令和元年簡易生命表」<br/>
+            および「健康寿命の令和元年値」の統計データを参照しています。<br/>
+            ※生活習慣による寿命増減は独自シミュレーションに基づく推計です。
+          </div>
+        </form>
       </div>
     </div>
   );
 }
 
+function LoadingScreen() {
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-black text-cyan-500 font-mono">
+      <div className="w-64 space-y-4">
+        <div className="h-1 bg-gray-900 w-full overflow-hidden relative rounded-full">
+          <div className="absolute inset-0 bg-cyan-500 w-1/3 animate-[loading_2s_infinite]"></div>
+        </div>
+        <div className="flex justify-between text-[10px] animate-pulse">
+          <span>時間軸予測シミュレーション実行中...</span>
+          <span>準備完了</span>
+        </div>
+      </div>
+      <style>{`
+        @keyframes loading {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(300%); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 function ResultScreen({ result, formData, onReset }) {
-  const [barWidth, setBarWidth] = useState(0);
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [channel, setChannel] = useState("captain");
+  const [showOthers, setShowOthers] = useState(false);
 
-  useEffect(() => {
-    setTimeout(() => setBarWidth(result.progressRate), 1500);
-  }, [result.progressRate]);
+  const aiMessage = generateLocalMessage(formData, result, "ai");
 
   const handleFetch = () => {
     setLoading(true);
     setTimeout(() => {
-      const m = generateLocalMessage(formData, result, channel);
-      setMsg(m);
+      setMsg(generateLocalMessage(formData, result, channel));
       setLoading(false);
     }, 800);
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 yamato-font relative overflow-hidden">
-      <div className="scanline"></div>
-      <div className="z-10 w-full max-w-4xl text-center flex flex-col gap-10">
-        <div className="fade-in-text delay-1 text-gray-400 flex flex-col md:flex-row justify-center gap-4 md:gap-12 text-xl tracking-widest font-mono">
-          <div>PREDICTED HEALTH AGE: <span className="text-white font-bold">{result.healthAge}</span></div>
-          <div>ESTIMATED LIFESPAN: <span className="text-white font-bold">{result.lifeAge}</span></div>
-        </div>
-        <div className="w-full max-w-xl mx-auto fade-in-text delay-2 px-4">
-          <div className="flex justify-between text-[10px] text-gray-500 mb-1 font-mono"><span>BIRTH</span><span>LIFE PROGRESS: {result.progressRate}%</span><span>END</span></div>
-          <div className="h-2.5 bg-gray-900 rounded-full overflow-hidden border border-gray-800">
-            <div className="h-full bg-red-700 transition-all duration-[2500ms]" style={{ width: `${barWidth}%` }}></div>
+    <div className="min-h-screen flex items-center justify-center p-4 pb-20">
+      <div className="glass-panel max-w-5xl w-full p-4 md:p-10 rounded-2xl animate-reveal relative overflow-hidden">
+        
+        {/* Header Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+          <div className="bg-black/40 p-4 border border-gray-800 rounded-lg">
+            <p className="text-[10px] text-cyan-600 font-mono mb-1 tracking-tighter">予測健康寿命</p>
+            <p className="text-3xl font-bold font-mono text-white glow-text-cyan">{result.healthAge}<span className="text-xs ml-1 text-gray-500">歳</span></p>
           </div>
-        </div>
-        <div className="fade-in-text delay-3">
-          <div className="text-gray-400 text-xs md:text-sm mb-3 tracking-[0.3em] font-mono">HEALTHY LIFE ENDS IN</div>
-          <div className="text-6xl md:text-8xl font-black flash-red tracking-widest flex items-baseline justify-center gap-4">
-            <span className="text-xl md:text-3xl font-normal text-gray-400">{result.isHealthOver ? "" : "あと"}</span>
-            {result.isHealthOver ? "LIMIT REACHED" : result.healthDays.toLocaleString()}
-            <span className="text-xl md:text-3xl font-normal text-gray-400">{result.isHealthOver ? "" : "日"}</span>
+          <div className="bg-black/40 p-4 border border-gray-800 rounded-lg">
+            <p className="text-[10px] text-cyan-600 font-mono mb-1">予測平均寿命</p>
+            <p className="text-3xl font-bold font-mono text-white glow-text-cyan">{result.lifeAge}<span className="text-xs ml-1 text-gray-500">歳</span></p>
           </div>
-        </div>
-        <div className="fade-in-text delay-4 border-t border-gray-900 pt-8">
-          <div className="text-gray-400 text-xs md:text-sm mb-3 tracking-[0.3em] font-mono">COMPLETE SHUTDOWN IN</div>
-          <div className="text-4xl md:text-6xl font-bold text-red-600 tracking-widest flex items-baseline justify-center gap-4">
-            <span className="text-lg md:text-2xl font-normal text-gray-500">あと</span>
-            {result.isLifeOver ? "ERROR" : result.lifeDays.toLocaleString()}
-            <span className="text-lg md:text-2xl font-normal text-gray-500">日</span>
-          </div>
-        </div>
-        <div className="mt-4 w-full max-w-xl mx-auto fade-in-text delay-5">
-          {!msg && !loading ? (
-            <div className="bg-blue-900/10 border border-blue-900/50 p-4 rounded flex flex-col gap-2">
-              <select value={channel} onChange={e => setChannel(e.target.value)} className="bg-black text-blue-300 p-2 text-sm border border-blue-900/50 outline-none font-mono">
-                <option value="captain">CH-01: 艦長 (SFドラマ風)</option>
-                <option value="muscle">CH-02: 筋肉トレーナー (熱血)</option>
-                <option value="okan">CH-03: 関西のおかん (愛情)</option>
-                <option value="ai">CH-04: 管理AI (冷徹)</option>
-                <option value="chu2">CH-05: 暗黒魔界の覇王 (中二病)</option>
-              </select>
-              <button onClick={handleFetch} className="bg-blue-900/30 hover:bg-blue-800/50 border border-blue-800 text-blue-200 py-3 font-bold transition-all font-mono">
-                RECEIVE TRANSMISSION
-              </button>
+          <div className="col-span-2 bg-red-950/20 p-4 border border-red-900/30 rounded-lg relative overflow-hidden">
+            <p className="text-[10px] text-red-500 font-mono mb-1">生命活動進行度</p>
+            <div className="flex items-end gap-2">
+              <p className="text-3xl font-bold font-mono text-red-500 glow-text-red">{result.progressRate}%</p>
+              <div className="flex-1 h-2 bg-black/60 rounded-full mb-2 overflow-hidden border border-red-900/20">
+                <div className="h-full bg-red-600 shadow-[0_0_10px_rgba(255,0,0,0.5)] transition-all duration-1000" style={{width: `${result.progressRate}%`}}></div>
+              </div>
             </div>
-          ) : (
-            <div className="bg-gray-900/80 border border-blue-800 p-6 rounded text-left shadow-2xl relative min-h-[150px]">
-              <div className="absolute top-0 left-0 w-full h-0.5 bg-blue-500"></div>
-              <h3 className="text-blue-400 text-[10px] tracking-widest mb-3 flex items-center gap-2 font-mono animate-pulse">INCOMING...</h3>
-              {loading ? <div className="text-blue-300 text-sm animate-pulse font-mono">DECODING DATA...</div> : <p className="text-blue-100 text-sm md:text-base leading-relaxed whitespace-pre-wrap">{msg}</p>}
-              {!loading && <button onClick={() => setMsg("")} className="mt-6 text-blue-500 text-[10px] hover:text-blue-300 underline font-mono">CLOSE</button>}
+          </div>
+        </div>
+
+        {/* Main Countdown */}
+        <div className="flex flex-col md:flex-row gap-8 items-center justify-center py-10 border-y border-cyan-900/20 mb-10">
+          <div className="text-center space-y-2">
+            <h3 className="text-xs text-cyan-500 font-mono tracking-[0.4em]">健康活動限界まで</h3>
+            <div className={`text-5xl md:text-7xl font-black font-mono tracking-tighter flex items-baseline justify-center gap-2 ${result.isHealthOver ? 'text-red-600 animate-pulse' : 'text-white'}`}>
+              <span className="text-xl md:text-3xl font-normal text-gray-500">{result.isHealthOver ? "" : "あと"}</span>
+              {result.isHealthOver ? "限界突破" : result.healthDays.toLocaleString()}
+              <span className="text-xl md:text-3xl font-normal text-gray-500">{result.isHealthOver ? "" : "日"}</span>
+            </div>
+            <p className="text-gray-500 text-xs font-mono uppercase">{result.isHealthOver ? "限界値を超過しています" : "残存日数"}</p>
+          </div>
+          
+          <div className="hidden md:block w-px h-32 bg-gradient-to-b from-transparent via-cyan-900/50 to-transparent"></div>
+
+          <div className="text-center space-y-2">
+            <h3 className="text-xs text-red-600 font-mono tracking-[0.4em]">完全生命活動停止まで</h3>
+            <div className="text-4xl md:text-6xl font-black font-mono text-red-800 tracking-tighter flex items-baseline justify-center gap-2">
+              <span className="text-lg md:text-2xl font-normal text-gray-600">あと</span>
+              {result.isLifeOver ? "測定不能" : result.lifeDays.toLocaleString()}
+              <span className="text-lg md:text-2xl font-normal text-gray-600">日</span>
+            </div>
+            <p className="text-gray-600 text-xs font-mono uppercase">残存猶予期間</p>
+          </div>
+        </div>
+
+        {/* AI System Report (Default Display) */}
+        <div className="bg-black/60 rounded-xl border border-cyan-900/30 p-6 mb-8 flex flex-col relative animate-reveal delay-3">
+          <div className="absolute top-0 left-0 w-full h-0.5 bg-cyan-500/50"></div>
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-[10px] text-cyan-600 font-mono">● CH-04: 管理AI システムレポート</span>
+            <BarChart3 className="text-cyan-900 w-4 h-4" />
+          </div>
+          <p className="text-white font-serif text-lg leading-relaxed">{aiMessage}</p>
+        </div>
+
+        {/* Communication Block (Other Channels) */}
+        <div className="space-y-6 mb-12">
+          <button 
+            onClick={() => setShowOthers(!showOthers)} 
+            className="text-[10px] font-mono text-cyan-500 hover:text-cyan-300 flex items-center gap-2 transition-all border border-cyan-900/50 bg-cyan-900/10 px-6 py-3 rounded-full mx-auto"
+          >
+            <Navigation className={`w-3 h-3 transition-transform ${showOthers ? 'rotate-180' : ''}`} /> 
+            他の助言も聞きたい？
+          </button>
+
+          {showOthers && (
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 animate-reveal">
+              <div className="lg:col-span-2 space-y-4">
+                <h4 className="text-[10px] font-mono text-cyan-700 flex items-center gap-2"><Navigation className="w-3 h-3" /> 通信チャンネル選択</h4>
+                <div className="grid grid-cols-1 gap-2">
+                  {[
+                    {id: 'captain', name: 'CH-01: 艦長', icon: '艦'},
+                    {id: 'muscle', name: 'CH-02: 筋肉トレーナー', icon: '筋'},
+                    {id: 'okan', name: 'CH-03: 関西のおかん', icon: '母'},
+                    {id: 'chu2', name: 'CH-05: 暗黒魔界の覇王', icon: '魔'}
+                  ].map(c => (
+                    <button key={c.id} onClick={() => setChannel(c.id)} 
+                      className={`text-left p-3 rounded font-mono text-[10px] transition-all border ${channel === c.id ? 'bg-cyan-900/40 border-cyan-500 text-white shadow-[0_0_15px_rgba(0,242,255,0.2)]' : 'bg-black/40 border-gray-800 text-gray-500 hover:border-gray-600'}`}>
+                      <span className="mr-2 text-cyan-600 opacity-50">[{c.icon}]</span> {c.name}
+                    </button>
+                  ))}
+                </div>
+                <button onClick={handleFetch} className="w-full py-4 bg-cyan-900/20 border border-cyan-800 text-cyan-400 font-bold tracking-widest text-xs hover:bg-cyan-800/40 transition-all">
+                  通信を受信する
+                </button>
+              </div>
+
+              <div className="lg:col-span-3 bg-black/60 rounded-xl border border-cyan-900/30 p-6 flex flex-col relative min-h-[200px]">
+                <div className="absolute top-0 left-0 w-full h-0.5 bg-cyan-500/50"></div>
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-[10px] text-cyan-600 font-mono animate-pulse">● シグナル受信中...</span>
+                  <BarChart3 className="text-cyan-900 w-4 h-4" />
+                </div>
+                
+                {loading ? (
+                  <div className="flex-1 flex items-center justify-center text-cyan-800 font-mono text-sm animate-pulse">暗号解読中...</div>
+                ) : msg ? (
+                  <div className="flex-1 animate-reveal">
+                    <p className="text-white font-serif text-lg leading-relaxed">{msg}</p>
+                  </div>
+                ) : (
+                  <div className="flex-1 flex items-center justify-center text-gray-800 font-mono text-[10px] tracking-[0.5em]">スタンバイ</div>
+                )}
+
+                {msg && (
+                  <button onClick={() => setMsg("")} className="mt-4 text-[10px] text-gray-600 hover:text-cyan-500 underline self-start font-mono">通信を切断</button>
+                )}
+              </div>
             </div>
           )}
         </div>
-        <button onClick={onReset} className="mt-8 text-gray-700 hover:text-white text-[10px] fade-in-text delay-5 tracking-[0.2em] font-mono">RE-ANALYZE SYSTEM</button>
+
+        <button onClick={onReset} className="absolute bottom-4 right-6 text-[10px] text-gray-800 hover:text-white transition-all font-mono tracking-widest">
+          システム再起動
+        </button>
       </div>
     </div>
   );
@@ -316,29 +480,57 @@ export default function App() {
   const [step, setStep] = useState('input');
   const [result, setResult] = useState(null);
   const [data, setData] = useState(null);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const audioRef = useRef(null);
 
   const start = (d) => {
-    setData(d); setResult(calculateLifeData(d)); setStep('loading');
-    if (audioRef.current) { audioRef.current.volume = 0.1; audioRef.current.play().catch(()=>{}); }
-    setTimeout(() => setStep('result'), 3500);
+    setData(d); 
+    setResult(calculateLifeData(d)); 
+    setStep('loading');
+    if (audioRef.current && !isMuted) {
+      audioRef.current.volume = 0.1;
+      audioRef.current.play().catch(()=>{});
+    }
+    setTimeout(() => setStep('result'), 2500);
   };
 
   return (
-    <>
+    <div className="bg-space min-h-screen selection:bg-cyan-500/30 text-gray-200 overflow-x-hidden font-sans">
       <style>{styles}</style>
-      <div className="w-full min-h-screen bg-black relative selection:bg-red-900/30">
-        <audio ref={audioRef} src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=space-atmosphere-101538.mp3" loop />
-        {step !== 'input' && (
-          <button onClick={() => { if(audioRef.current){ audioRef.current.muted = !audioRef.current.muted; setIsMuted(audioRef.current.muted); }}} className="absolute top-4 right-4 z-50 text-gray-500 p-2">
-            {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-          </button>
-        )}
+      <div className="scanline"></div>
+      
+      <audio ref={audioRef} src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=space-atmosphere-101538.mp3" loop />
+      
+      {step !== 'input' && (
+        <button onClick={() => { 
+          if(audioRef.current){ 
+            audioRef.current.muted = !audioRef.current.muted; 
+            setIsMuted(audioRef.current.muted);
+            if(!audioRef.current.muted) audioRef.current.play().catch(()=>{});
+          }
+        }} className="fixed top-6 right-6 z-[200] p-3 rounded-full bg-black/50 border border-gray-800 text-gray-500 hover:text-white transition-all">
+          {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+        </button>
+      )}
+
+      <main className="relative z-10">
         {step === 'input' && <InputScreen onCalculate={start} />}
         {step === 'loading' && <LoadingScreen />}
         {step === 'result' && <ResultScreen result={result} formData={data} onReset={() => setStep('input')} />}
-      </div>
-    </>
+      </main>
+
+      {/* Footer Branding with Reference */}
+      <footer className="fixed bottom-4 left-6 z-10 hidden md:block">
+        <div className="flex flex-col gap-1">
+          <div className="text-[8px] text-cyan-800/50 font-mono tracking-wider">
+            [REF] 厚生労働省 令和元年簡易生命表 / 健康寿命データ
+          </div>
+          <div className="flex items-center gap-2 opacity-20 hover:opacity-50 transition-all cursor-default">
+            <Zap className="w-3 h-3 text-cyan-500" />
+            <span className="text-[10px] font-mono tracking-widest text-cyan-500">神台ヤマト・システムズ株式会社</span>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 }
